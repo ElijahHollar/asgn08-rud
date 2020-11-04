@@ -6,20 +6,19 @@ if(!isset($_GET['id'])) {
   redirect_to(url_for('/bird-staff/views/index.php'));
 }
 $id = $_GET['id'];
+$bird = Bird::find_by_id($id);
+if($bird == false) {
+  redirect_to(url_for('/bird-staff/index.php'));
+}
 
 if(is_post_request()) {
 
   // Save record using post parameters
-  $args = [];
-  $args['commnon_name'] = $_POST['common_name'] ?? NULL;
-  $args['habitat'] = $_POST['habitat'] ?? NULL;
-  $args['food'] = $_POST['food'] ?? NULL;
-  $args['conservation_id'] = $_POST['conservation_id'] ?? NULL;
-  $args['backyard_tips'] = $_POST['backyard_tips'] ?? NULL;
+  $args = $_POST['bird'];
+  
+  $bird->merge_attributes($args);
+  $result = $bird->save();
 
-  $bird = [];
-
-  $result = false;
   if($result === true) {
     $_SESSION['message'] = 'The bird was updated successfully.';
     redirect_to(url_for('/bird-staff/views/show.php?id=' . $id));
@@ -30,10 +29,7 @@ if(is_post_request()) {
 } else {
 
   // display the form
-  $bird = Bird::find_by_id($id);
-  if($bird == false) {
-    redirect_to(url_for('/bird-staff/index.php'));
-  }
+
 }
 
 ?>
