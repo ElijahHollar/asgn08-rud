@@ -103,22 +103,18 @@
     }
 
     public function create() {
-        $attributes = $this->attributes();
+        $attributes = $this->sanitized_attributes();
         // var_dump($attributes);
         // var_dump(array_values($attributes));
         $sql = "INSERT INTO birds (";
         $sql .= join(', ', array_keys($attributes));
-        $sql .= ") VALUES ('";
-        $sql .= join("', '", array_values($attributes));
-        $sql .= "');";
+        $sql .= ") VALUES (";
+        $sql .= join(", ", array_values($attributes));
+        $sql .= ");";
 
 
         $stmt = self::$database->prepare($sql);
         
-        $test = ['\'dad'];
-        var_dump($test);
-        // var_dump($stmt);
-
         // $stmt->bindValue(':common_name', $this->common_name );
         // $stmt->bindValue(':habitat', $this->habitat );
         // $stmt->bindValue(':food', $this->food );
@@ -151,6 +147,7 @@
         foreach($this->attributes() as $key => $value) {
             $sanitized[$key] = self::$database->quote($value);
         }
+        var_dump($sanitized);
         return $sanitized;
     }
 
